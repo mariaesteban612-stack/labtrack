@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LabTrack - Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- SIDEBAR -->
+        <aside class="dashboard-sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">🖥️</div>
+                <div class="sidebar-title">LabTrack</div>
+            </div>
+            <nav class="sidebar-nav"></nav>
+            <div class="sidebar-footer">
+                <div class="user-info"></div>
+                <button class="btn-logout">🚪 Cerrar Sesión</button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <h1 class="header-title">Dashboard</h1>
+                <div class="header-actions">
+                    <span id="hora" style="font-size: 13px; color: var(--text-light);"></span>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <!-- TAB: RESUMEN -->
+                <div id="tab-resumen" class="tab-content active">
+                    <div class="grid">
+                        <div class="stat-box">
+                            <div style="font-size: 24px;">📅</div>
+                            <div class="stat-value" id="totalReservas">0</div>
+                            <div class="stat-label">Total de Reservas</div>
+                        </div>
+                        <div class="stat-box success">
+                            <div style="font-size: 24px;">✅</div>
+                            <div class="stat-value" id="reservasActivas">0</div>
+                            <div class="stat-label">Reservas Activas</div>
+                        </div>
+                        <div class="stat-box">
+                            <div style="font-size: 24px;">🏢</div>
+                            <div class="stat-value" id="totalLabs">4</div>
+                            <div class="stat-label">Laboratorios</div>
+                        </div>
+                        <div class="stat-box info">
+                            <div style="font-size: 24px;">👥</div>
+                            <div class="stat-value" id="usuariosActivos">0</div>
+                            <div class="stat-label">Usuarios Activos</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">Últimas Reservas</div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Laboratorio</th>
+                                    <th>Fecha</th>
+                                    <th>Horario</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reservasTable">
+                                <tr>
+                                    <td colspan="6" style="text-align: center; color: var(--text-light);">Cargando...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TAB: MIS RESERVAS -->
+                <div id="tab-reservas" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">Mis Reservas</div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Laboratorio</th>
+                                    <th>Fecha</th>
+                                    <th>Horario</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reservasTable">
+                                <tr>
+                                    <td colspan="6" style="text-align: center; color: var(--text-light);">Cargando...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TAB: DISPONIBILIDAD -->
+                <div id="tab-disponibilidad" class="tab-content">
+                    <div class="grid" id="disponibilidadContainer">
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-light);">Cargando disponibilidad...</div>
+                    </div>
+                </div>
+
+                <!-- TAB: NUEVA RESERVA -->
+                <div id="tab-nueva-reserva" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">Crear Nueva Reserva</div>
+                        <form id="formNuevaReserva" style="max-width: 500px;">
+                            <div class="form-group">
+                                <label>Laboratorio</label>
+                                <select id="selectLab" required style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px;">
+                                    <option value="">Selecciona un laboratorio</option>
+                                    <option value="lab-a">Laboratorio A (Piso 2)</option>
+                                    <option value="lab-b">Laboratorio B (Piso 3)</option>
+                                    <option value="lab-c">Laboratorio C (Piso 4)</option>
+                                    <option value="lab-d">Laboratorio D (Piso 5)</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Fecha</label>
+                                <input type="date" id="inputFecha" required style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px;">
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                <div class="form-group">
+                                    <label>Hora Inicio</label>
+                                    <input type="time" id="inputHoraInicio" required style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px;">
+                                </div>
+                                <div class="form-group">
+                                    <label>Hora Fin</label>
+                                    <input type="time" id="inputHoraFin" required style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px;">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Motivo de la Reserva</label>
+                                <textarea id="inputMotivo" required placeholder="Ejemplo: Clase de Bases de Datos" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; min-height: 80px; font-family: inherit;"></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Crear Reserva</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- TAB: USUARIOS (ADMIN) -->
+                <div id="tab-usuarios" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">Gestión de Usuarios</div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Email</th>
+                                    <th>Rol</th>
+                                    <th>Estado</th>
+                                    <th>Último Login</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usuariosTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TAB: EQUIPOS (ADMIN) -->
+                <div id="tab-equipos" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">Gestión de Equipos</div>
+                        <p style="color: var(--text-light); margin-bottom: 15px;">Equipos por laboratorio</p>
+                        <div class="grid" id="equiposContainer"></div>
+                    </div>
+                </div>
+
+                <!-- TAB: REPORTES BI -->
+                <div id="tab-reportes" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">Reportes de Inteligencia de Negocios</div>
+                        <p style="color: var(--text-light); margin-bottom: 20px;">📊 KPIs y análisis del sistema</p>
+                        
+                        <div class="grid">
+                            <div style="grid-column: 1 / -1;">
+                                <canvas id="chartReservas" style="max-height: 300px;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- SCRIPTS -->
+    <script src="storage.js"></script>
+    <script src="users.js"></script>
+    <script src="auth.js"></script>
+    <script src="dashboard.js"></script>
+    <script>
+        // Actualizar hora en tiempo real
+        setInterval(() => {
+            const ahora = new Date();
+            document.getElementById('hora').textContent = ahora.toLocaleTimeString('es-ES');
+        }, 1000);
+
+        // Renderizar tabla de usuarios (solo para admin)
+        function renderUsuarios() {
+            if (!Auth.isAdmin()) return;
+            
+            const usuarios = Users.getAllUsers();
+            const tbody = document.getElementById('usuariosTable');
+            
+            tbody.innerHTML = usuarios.map(user => `
+                <tr>
+                    <td>${user.nombre} ${user.apellido}</td>
+                    <td>${user.email}</td>
+                    <td><span class="badge badge-info">${user.role}</span></td>
+                    <td><span class="badge ${user.activo ? 'badge-success' : 'badge-danger'}">${user.activo ? 'Activo' : 'Inactivo'}</span></td>
+                    <td>${user.lastLogin ? new Date(user.lastLogin).toLocaleString('es-ES') : 'Nunca'}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Renderizar equipos (solo para admin)
+        function renderEquipos() {
+            if (!Auth.isAdmin()) return;
+            
+            const labs = Storage.getLaboratorios();
+            const container = document.getElementById('equiposContainer');
+            
+            container.innerHTML = labs.map(lab => `
+                <div class="card">
+                    <div class="card-header">${lab.nombre}</div>
+                    <div style="margin-bottom: 10px;">
+                        <div style="font-size: 20px; font-weight: 700; color: var(--primary);">${lab.capacidad}</div>
+                        <div style="font-size: 12px; color: var(--text-light);">Computadoras instaladas</div>
+                    </div>
+                    <div style="font-size: 12px; color: var(--text-light);">
+                        📍 ${lab.ubicacion}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Renderizar gráfico de reportes
+        function renderChart() {
+            const ctx = document.getElementById('chartReservas');
+            if (!ctx) return;
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Lab A', 'Lab B', 'Lab C', 'Lab D'],
+                    datasets: [{
+                        label: 'Reservas',
+                        data: [12, 8, 15, 10],
+                        backgroundColor: [
+                            'rgba(59, 130, 246, 0.7)',
+                            'rgba(16, 185, 129, 0.7)',
+                            'rgba(245, 158, 11, 0.7)',
+                            'rgba(239, 68, 68, 0.7)'
+                        ],
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        // Inicializar elementos admin
+        document.addEventListener('DOMContentLoaded', () => {
+            if (Auth.isAdmin()) {
+                renderUsuarios();
+                renderEquipos();
+                renderChart();
+            }
+        });
+    </script>
+</body>
+</html>
