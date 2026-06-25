@@ -1,0 +1,32 @@
+.gitignore
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Build
+dist/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Testing
+.coverage/
+.nyc_output/
+
+# Temp
+tmp/
+temp/
